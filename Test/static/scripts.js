@@ -83,7 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const encryptionTime = performance.now() - encryptionStartTime;
       
       // Update UI
-      document.getElementById('cipherText').textContent = ciphertext;
+      document.getElementById('finalBinary').textContent = textToBinary(ciphertext);
+      document.getElementById('finalHex').textContent = ciphertext;
+      document.getElementById('finalBase64').textContent = btoa(ciphertext);
       document.getElementById('output').classList.remove('hidden');
       document.getElementById('processDiagram').classList.remove('hidden');
       
@@ -1855,13 +1857,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const transpositionOutput = simulateTransposition(chaoticOutput)
     document.getElementById("transpositionOutput").textContent = formatBitsWithSpaces(transpositionOutput)
 
-    // ZTM mode - Speck
+    // ZTM mode - ChaCha20 and Speck
     if (mode === "ztm") {
+      // ChaCha20 encryption
+      const chachaKey = Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")
+      const speckKey = Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join("")
+      document.getElementById("ztmKeysDisplay").textContent =
+        `ChaCha20 Key: 0x${chachaKey.substring(0, 16)}...\nSpeck Key: 0x${speckKey}`
+      document.getElementById("ztmKeysContainer").classList.remove("hidden")
+      document.getElementById("step6").classList.remove("hidden")
+
+      // Simulate ChaCha20 encryption (using XOR for demo)
+      const chachaKeystream = generateRandomBits(transpositionOutput.length)
+      const chachaOutput = xorBits(transpositionOutput, chachaKeystream)
+      
+      // Speck encryption
       document.getElementById("speckKeyValue").textContent = `0x${speckKey}`
-      document.getElementById("speckInput").textContent = formatBitsWithSpaces(transpositionOutput)
+      document.getElementById("speckInput").textContent = formatBitsWithSpaces(chachaOutput)
 
       // Simulate Speck output
-      const speckOutput = simulateTransposition(transpositionOutput) // Just another transposition for demo
+      const speckOutput = simulateTransposition(chachaOutput) // Just another transposition for demo
       document.getElementById("speckOutput").textContent = formatBitsWithSpaces(speckOutput)
 
       // Final output
@@ -2127,7 +2142,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     })
 
-    // Step 2: LFSR
+    // Step 2: LFSR or ChaCha20
     timeline.add({
       targets: ".vis-step-2",
       scale: [0, 1],
@@ -2139,13 +2154,34 @@ document.addEventListener("DOMContentLoaded", () => {
       begin: () => {
         currentStep = 1
         updateInfoPanel(currentStep)
-        document.getElementById("visProcessStatus").textContent = "Processing: LFSR Stream"
+        const mode = document.getElementById("mode").value
+        document.getElementById("visProcessStatus").textContent = mode === "ztm" ? "Processing: ChaCha20" : "Processing: LFSR Stream"
         particleSystem.visible = true
         dataCube.material.color.set(0x60a5fa)
       },
     })
 
-    // Step 3: Chaotic Map
+    // Step 3: LFSR (only in ZTM mode)
+    if (document.getElementById("mode").value === "ztm") {
+      timeline.add({
+        targets: ".vis-step-3",
+        scale: [0, 1],
+        backgroundColor: {
+          value: ["rgba(55, 65, 81, 0.8)", "rgba(59, 130, 246, 0.8)"],
+          easing: "easeInOutQuad",
+        },
+        duration: 800,
+        begin: () => {
+          currentStep = 2
+          updateInfoPanel(currentStep)
+          document.getElementById("visProcessStatus").textContent = "Processing: LFSR Stream"
+          dataCube.material.wireframe = true
+          dataCube.material.color.set(0x60a5fa)
+        },
+      })
+    }
+
+    // Step 4: Chaotic Map
     timeline.add({
       targets: ".vis-step-3",
       scale: [0, 1],
@@ -2155,7 +2191,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       duration: 800,
       begin: () => {
-        currentStep = 2
+        currentStep = document.getElementById("mode").value === "ztm" ? 3 : 2
         updateInfoPanel(currentStep)
         document.getElementById("visProcessStatus").textContent = "Processing: Chaotic Map"
         dataCube.material.wireframe = true
@@ -2170,7 +2206,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     })
 
-    // Step 4: Transposition
+    // Step 5: Transposition
     timeline.add({
       targets: ".vis-step-4",
       scale: [0, 1],
@@ -2180,7 +2216,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       duration: 800,
       begin: () => {
-        currentStep = 3
+        currentStep = document.getElementById("mode").value === "ztm" ? 4 : 3
         updateInfoPanel(currentStep)
         document.getElementById("visProcessStatus").textContent = "Processing: Transposition"
         // Animate cube scale
@@ -2210,7 +2246,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         duration: 800,
         begin: () => {
-          currentStep = 4
+          currentStep = 5
           updateInfoPanel(currentStep)
           document.getElementById("visProcessStatus").textContent = "Processing: Speck CTR"
           dataCube.material.wireframe = false

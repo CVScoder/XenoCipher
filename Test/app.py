@@ -801,6 +801,10 @@ def scripts_js():
     """Serve the scripts.js file"""
     return send_from_directory('static', 'scripts.js')
 
+@app.route('/chaotic_sequences.html')
+def chaotic_sequences():
+    return send_from_directory('static', 'chaotic_sequences.html')
+
 @app.route('/')
 def index():
     """Serve the main HTML page"""

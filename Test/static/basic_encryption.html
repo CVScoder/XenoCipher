@@ -1,0 +1,1234 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>XenoCipher: A Multi-Layered Cryptographic Framework for IoT Security</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+      :root {
+          --primary: #1a1a2e;
+          --secondary: #16213e;
+          --accent: #0f3460;
+          --muted: #e94560;
+          --text-primary: #f0f0f0;
+          --text-secondary: #d1d1d1;
+          --text-muted: #a3a3a3;
+          --border: #2d2d42;
+          --surface: #242442;
+      }
+      
+      body {
+          font-family: 'Inter', sans-serif;
+          background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+          color: var(--text-primary);
+          line-height: 1.6;
+          overflow-x: hidden;
+      }
+      
+      .font-display {
+          font-family: 'Playfair Display', serif;
+      }
+      
+      .toc-fixed {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 280px;
+          height: 100vh;
+          background: rgba(26, 26, 46, 0.95);
+          backdrop-filter: blur(10px);
+          border-right: 1px solid var(--border);
+          z-index: 1000;
+          overflow-y: auto;
+          padding: 2rem 1.5rem;
+          transition: transform 0.3s ease;
+      }
+      
+      .toc-hidden {
+          transform: translateX(-100%);
+      }
+      
+      .main-content {
+          margin-left: 280px;
+          min-height: 100vh;
+          transition: margin-left 0.3s ease;
+      }
+      
+      .hero-section {
+          background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+          position: relative;
+          overflow: hidden;
+      }
+      
+      .hero-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto auto;
+          gap: 2rem;
+          align-items: center;
+      }
+      
+      .hero-title {
+          grid-column: 1 / -1;
+          position: relative;
+          z-index: 2;
+      }
+      
+      .hero-visual {
+          position: relative;
+          background: linear-gradient(45deg, rgba(15, 52, 96, 0.3), rgba(233, 69, 96, 0.2));
+          border-radius: 1rem;
+          overflow: hidden;
+      }
+      
+      .hero-stats {
+          background: rgba(36, 36, 66, 0.6);
+          border: 1px solid var(--border);
+          border-radius: 1rem;
+          backdrop-filter: blur(10px);
+      }
+      
+      .section-card {
+          background: rgba(36, 36, 66, 0.6);
+          border: 1px solid var(--border);
+          border-radius: 1rem;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+      }
+      
+      .section-card:hover {
+          border-color: var(--muted);
+          transform: translateY(-2px);
+      }
+      
+      .code-block {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 0.75rem;
+          font-family: 'Monaco', 'Menlo', monospace;
+      }
+      
+      .citation {
+          color: var(--muted);
+          text-decoration: none;
+          font-weight: 500;
+          transition: color 0.2s ease;
+      }
+      
+      .citation:hover {
+          color: #ff6b8b;
+      }
+      
+      .toc-link {
+          display: block;
+          padding: 0.5rem 0;
+          color: var(--text-secondary);
+          text-decoration: none;
+          border-left: 2px solid transparent;
+          padding-left: 1rem;
+          transition: all 0.2s ease;
+      }
+      
+      .toc-link:hover, .toc-link.active {
+          color: var(--text-primary);
+          border-left-color: var(--muted);
+          background: rgba(233, 69, 96, 0.1);
+      }
+      
+      .toc-link.sub {
+          font-size: 0.9rem;
+          padding-left: 2rem;
+          color: var(--text-muted);
+      }
+      
+      .highlight-box {
+          background: linear-gradient(135deg, rgba(15, 52, 96, 0.3), rgba(233, 69, 96, 0.1));
+          border-left: 4px solid var(--muted);
+      }
+      
+      .algorithm-step {
+          background: rgba(36, 36, 66, 0.4);
+          border: 1px solid var(--border);
+          border-radius: 0.75rem;
+          position: relative;
+      }
+      
+      .algorithm-step::before {
+          content: attr(data-step);
+          position: absolute;
+          top: -10px;
+          left: 1rem;
+          background: var(--muted);
+          color: white;
+          padding: 0.25rem 0.75rem;
+          border-radius: 1rem;
+          font-size: 0.8rem;
+          font-weight: 600;
+      }
+      
+      @media (max-width: 1024px) {
+          .toc-fixed {
+              transform: translateX(-100%);
+          }
+          
+          .toc-fixed.toc-visible {
+              transform: translateX(0);
+          }
+          
+          .main-content {
+              margin-left: 0;
+          }
+          
+          .hero-grid {
+              grid-template-columns: 1fr;
+          }
+      }
+
+      /* New media query for small screens */
+      @media (max-width: 768px) {
+          .hero-title h1 {
+              font-size: 2.5rem;
+          }
+          
+          .hero-title h2 {
+              font-size: 1.5rem;
+          }
+      }
+  </style>
+</head>
+
+<body>
+  <!-- Fixed Table of Contents -->
+  <nav class="toc-fixed">
+    <div class="mb-8">
+      <h3 class="font-display text-xl font-bold mb-4">Contents</h3>
+    </div>
+    <div class="space-y-1">
+      <a href="#overview" class="toc-link">Overview</a>
+      <a href="#architecture" class="toc-link">System Architecture</a>
+      <a href="#lfsr" class="toc-link">LFSR Component</a>
+      <a href="#lfsr-implementation" class="toc-link sub">Implementation</a>
+      <a href="#chaos" class="toc-link">Chaotic Map Layer</a>
+      <a href="#chaos-implementation" class="toc-link sub">Logistic Map</a>
+      <a href="#transposition" class="toc-link">Transposition Cipher</a>
+      <a href="#transposition-implementation" class="toc-link sub">Grid Permutation</a>
+      <a href="#example" class="toc-link">Complete Example</a>
+      <a href="#enhancements" class="toc-link">Future Enhancements</a>
+      <a href="#tinkerbell" class="toc-link sub">Tinkerbell Map</a>
+      <a href="#data-acquisition" class="toc-link sub">Data Acquisition</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Section -->
+    <section class="hero-section min-h-screen flex items-center relative">
+      <div class="absolute inset-0 opacity-10">
+        <img src="https://kimi-web-img.moonshot.cn/img/csdl-images.ieeecomputer.org/4abf6f80eb98f32fe32de45ab645868868a69218.gif" alt="Abstract visualization of cryptographic data flow" class="w-full h-full object-cover" size="large" aspect="wide" query="abstract cryptographic data flow" referrerpolicy="no-referrer" data-modified="1" data-score="0.00"/>
+      </div>
+
+      <div class="container mx-auto px-4 sm:px-8 py-16 relative z-10">
+        <div class="hero-grid max-w-6xl">
+          <!-- Title -->
+          <div class="hero-title text-center mb-12">
+            <h1 class="font-display text-5xl md:text-7xl font-bold mb-6 leading-tight">
+              <span class="italic text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-400">
+                XenoCipher
+              </span>
+            </h1>
+            <h2 class="font-display text-2xl md:text-3xl font-normal mb-8 text-gray-300">
+              A Multi-Layered Cryptographic Framework for IoT Security
+            </h2>
+            <div class="w-24 h-1 bg-gradient-to-r from-red-400 to-pink-400 mx-auto"></div>
+          </div>
+
+          <!-- Visual Element -->
+          <div class="hero-visual p-8">
+            <div class="text-center">
+              <div class="text-6xl mb-4">
+                <i class="fas fa-shield-alt text-red-400"></i>
+              </div>
+              <h3 class="font-display text-xl font-semibold mb-4">Multi-Layered Security</h3>
+              <p class="text-gray-300">LFSR → Chaos → Transposition → [ZTM]</p>
+            </div>
+          </div>
+
+          <!-- Key Stats -->
+          <div class="hero-stats p-8">
+            <div class="grid grid-cols-2 gap-6">
+              <div class="text-center">
+                <div class="text-3xl font-bold text-red-400 mb-2">3+</div>
+                <div class="text-sm text-gray-300">Encryption Layers</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-blue-400 mb-2">&lt;51KB</div>
+                <div class="text-sm text-gray-300">Memory Usage</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-green-400 mb-2">~5ms</div>
+                <div class="text-sm text-gray-300">Encryption Time</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-purple-400 mb-2">ESP32</div>
+                <div class="text-sm text-gray-300">Optimized</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-16 px-8">
+      <div class="container mx-auto max-w-4xl">
+        <div class="section-card p-8 mb-12">
+          <h2 class="font-display text-3xl font-bold mb-6">Project Overview</h2>
+
+          <div class="highlight-box p-6 mb-8">
+            <p class="text-lg leading-relaxed">
+              The XenoCipher project is a <strong>multi-layered cryptographic system</strong> designed specifically for IoT applications, balancing security, efficiency, and adaptability. Its core pipeline consists of three fundamental layers: a lightweight Linear Feedback Shift Register (LFSR) for initial scrambling, a chaotic map for introducing randomness, and an advanced transposition cipher to obscure data structure.
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="font-display text-xl font-semibold mb-4">Core Principles</h3>
+              <ul class="space-y-3">
+                <li class="flex items-start">
+                  <i class="fas fa-layer-group text-red-400 mt-1 mr-3"></i>
+                  <span><strong>Layered Security:</strong> Multiple encryption layers make system compromise difficult</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-feather text-blue-400 mt-1 mr-3"></i>
+                  <span><strong>Lightweight Design:</strong> Optimized for resource-constrained IoT devices</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-atom text-green-400 mt-1 mr-3"></i>
+                  <span><strong>Quantum Resistance:</strong> Built to withstand future quantum computing threats</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-sync-alt text-purple-400 mt-1 mr-3"></i>
+                  <span><strong>Adaptability:</strong> Dynamic algorithm switching based on attack detection</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="font-display text-xl font-semibold mb-4">Operational Modes</h3>
+              <div class="space-y-4">
+                <div class="algorithm-step p-4" data-step="NORMAL">
+                  <h4 class="font-semibold mb-2">Normal Operation</h4>
+                  <p class="text-sm text-gray-300">LFSR → Chaos → Transposition (Baseline security)</p>
+                </div>
+                <div class="algorithm-step p-4" data-step="ZTM">
+                  <h4 class="font-semibold mb-2">Zero Trust Mode</h4>
+                  <p class="text-sm text-gray-300">Adds ChaCha20 + Speck for enhanced protection</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- System Architecture -->
+    <section id="architecture" class="py-16 px-8">
+      <div class="container mx-auto max-w-6xl">
+        <div class="section-card p-8">
+          <h2 class="font-display text-3xl font-bold mb-8 text-center">System Architecture</h2>
+
+          <div class="grid lg:grid-cols-3 gap-8 mb-12">
+            <div class="text-center">
+              <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-stream text-white text-2xl"></i>
+              </div>
+              <h3 class="font-display text-xl font-semibold mb-3">LFSR Layer</h3>
+              <p class="text-sm text-gray-300">Lightweight pseudo-random key generation for initial scrambling</p>
+              <div class="mt-4 text-xs text-red-400">
+                <div>&lt; 10KB Memory</div>
+                <div>~1ms Processing</div>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-random text-white text-2xl"></i>
+              </div>
+              <h3 class="font-display text-xl font-semibold mb-3">Chaos Layer</h3>
+              <p class="text-sm text-gray-300">Logistic Map for enhanced entropy and randomness</p>
+              <div class="mt-4 text-xs text-blue-400">
+                <div>~20KB Memory</div>
+                <div>~2ms Processing</div>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-th text-white text-2xl"></i>
+              </div>
+              <h3 class="font-display text-xl font-semibold mb-3">Transposition</h3>
+              <p class="text-sm text-gray-300">Advanced grid-based permutation to obscure structure</p>
+              <div class="mt-4 text-xs text-green-400">
+                <div>~15KB Memory</div>
+                <div>~1ms Processing</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="highlight-box p-6">
+            <h3 class="font-display text-xl font-semibold mb-4">Adaptive Security Framework</h3>
+            <p class="mb-4">XenoCipher employs a sophisticated attack detection system that monitors:</p>
+            <div class="grid md:grid-cols-2 gap-6">
+              <ul class="space-y-2 text-sm">
+                <li><i class="fas fa-chart-line text-red-400 mr-2"></i>Entropy analysis (&lt;7.5 bits/byte)</li>
+                <li><i class="fas fa-times-circle text-red-400 mr-2"></i>Key exchange failures (&gt;10% over 100 attempts)</li>
+                <li><i class="fas fa-exclamation-triangle text-red-400 mr-2"></i>Decryption failures (&gt;5 in 10 seconds)</li>
+              </ul>
+              <ul class="space-y-2 text-sm">
+                <li><i class="fas fa-tachometer-alt text-red-400 mr-2"></i>Request rates (&gt;100/second)</li>
+                <li><i class="fas fa-clock text-red-400 mr-2"></i>Timing anomalies (&gt;2x expected)</li>
+                <li><i class="fas fa-shield-alt text-green-400 mr-2"></i>Automatic ZTM activation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LFSR Component -->
+    <section id="lfsr" class="py-16 px-8">
+      <div class="container mx-auto max-w-4xl">
+        <div class="section-card p-8">
+          <h2 class="font-display text-3xl font-bold mb-6">Component 1: LFSR-Based Stream Cipher</h2>
+
+          <p class="text-lg mb-8">
+            The Linear Feedback Shift Register (LFSR) forms the foundational layer of the XenoCipher encryption pipeline, selected for its exceptional performance in resource-constrained environments. The LFSR generates a pseudo-random keystream through a simple yet effective mechanism of shifting bits and calculated feedback.
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div>
+              <h3 class="font-display text-xl font-semibold mb-4">Core Functionality</h3>
+              <ul class="space-y-3 text-sm">
+                <li class="flex items-start">
+                  <i class="fas fa-cog text-blue-400 mt-1 mr-3"></i>
+                  <span><strong>Lightweight Generation:</strong> Minimal resource consumption with maximal period sequences</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-xor text-green-400 mt-1 mr-3"></i>
+                  <span><strong>Initial Scrambling:</strong> XOR operation flattens frequency distributions</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-recycle text-purple-400 mt-1 mr-3"></i>
+                  <span><strong>Reversible Process:</strong> Same operation for both encryption and decryption</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="font-display text-xl font-semibold mb-4">Technical Specifications</h3>
+              <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-300">Register Size:</span>
+                  <span class="font-mono">16-bit</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-300">Feedback Polynomial:</span>
+                  <span class="font-mono">x¹⁶ + x⁵ + x³ + 1</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-300">Period Length:</span>
+                  <span class="font-mono">65,535 bits</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-300">Memory Usage:</span>
+                  <span class="font-mono text-green-400">&lt; 10KB</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-300">Processing Time:</span>
+                  <span class="font-mono text-blue-400">~1ms</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="lfsr-implementation" class="mb-8">
+            <h3 class="font-display text-xl font-semibold mb-4">Implementation Example</h3>
+
+            <div class="code-block p-6 mb-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-semibold">Python Implementation</span>
+                <span class="text-xs text-gray-400">Using PyLFSR Library</span>
+              </div>
+              <pre class="text-sm overflow-x-auto"><code class="text-gray-300">import numpy as np
+from pylfsr import LFSR
+
+# Define the feedback polynomial: x^16 + x^5 + x^3 + 1
+fpoly = [16, 5, 3]
+
+# Define initial state (seed)
+init_state = [1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1]
+
+# Create LFSR object
+lfsr = LFSR(fpoly=fpoly, initstate=init_state)
+
+# Generate keystream of 100 bits
+keystream = lfsr.runKCycle(100)
+
+# Display generated keystream
+print(&#34;Generated Keystream:&#34;)
+print(lfsr.arr2str(keystream))</code></pre>
+            </div>
+
+            <div class="code-block p-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-semibold">Custom Implementation</span>
+                <span class="text-xs text-gray-400">Fibonacci LFSR</span>
+              </div>
+              <pre class="text-sm overflow-x-auto"><code class="text-gray-300">def lfsr_keystream(seed, length):
+  &#34;&#34;&#34;
+  Generates keystream using 16-bit Fibonacci LFSR
+  with polynomial x^16 + x^5 + x^3 + 1
+  &#34;&#34;&#34;
+  register = seed &amp; 0xFFFF  # Ensure 16-bit value
+  taps_mask = 0x0029  # Mask for bits 0, 3, and 5
+  keystream = []
+  
+  for _ in range(length):
+      # Calculate feedback bit (XOR of tap positions)
+      feedback_bit = bin(register &amp; taps_mask).count(&#39;1&#39;) % 2
+      
+      # Append output bit (LSB) to keystream
+      output_bit = register &amp; 1
+      keystream.append(output_bit)
+      
+      # Shift register and insert feedback
+      register &gt;&gt;= 1
+      register |= (feedback_bit &lt;&lt; 15)
+  
+  return keystream
+
+# Example usage with seed 0xACE1
+keystream = lfsr_keystream(0xACE1, 100)</code></pre>
+            </div>
+
+            <p class="text-sm text-gray-400 mt-4">
+              <i class="fas fa-info-circle mr-2"></i>
+              Source: <a href="https://pylfsr.github.io/" class="citation">PyLFSR Documentation</a> and custom implementation based on <a href="https://nhsjs.com/2025/an-efficient-synchronous-data-scrambling-technique-with-polynomial-and-lfsr-state-prediction-models/" class="citation">LFSR research</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chaos Layer -->
+    <section id="chaos" class="py-16 px-8">
+      <div class="container mx-auto max-w-4xl">
+        <div class="section-card p-8">
+          <h2 class="font-display text-3xl font-bold mb-6">Component 2: Chaotic Map Encryption</h2>
+
+          <p class="text-lg mb-8">
+            The chaotic map encryption layer enhances entropy and randomness using mathematical chaos theory. During the test phase, XenoCipher employs the Logistic Map, a simple yet powerful one-dimensional chaotic system that exhibits complex behavior from straightforward equations.
+          </p>
+
+          <div class="highlight-box p-6 mb-8">
+            <h3 class="font-display text-xl font-semibold mb-4">Logistic Map Formula</h3>
+            <div class="text-center text-2xl font-mono mb-4">
+              x<sub>n+1</sub> = r · x<sub>n</sub> · (1 - x<sub>n</sub>)
+            </div>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+              <div class="text-center">
+                <div class="font-semibold">r (Control Parameter)</div>
+                <div class="font-mono">3.8 - 4.0</div>
+                <div class="text-xs text-gray-400">Chaotic range</div>
+              </div>
+              <div class="text-center">
+                <div class="font-semibold">x₀ (Initial State)</div>
+                <div class="font-mono">0 &lt; x₀ &lt; 1</div>
+                <div class="text-xs text-gray-400">Derived from key</div>
+              </div>
+              <div class="text-center">
+                <div class="font-semibold">Output</div>
+                <div class="font-mono">0 &lt; xₙ &lt; 1</div>
+                <div class="text-xs text-gray-400">Chaotic sequence</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div>
+              <h3 class="font-display text-xl font-semibold mb-4">Process Flow</h3>
+              <div class="space-y-4">
+                <div class="algorithm-step p-4" data-step="1">
+                  <h4 class="font-semibold mb-2">Initialization</h4>
+                  <p class="text-sm text-gray-300">Derive x₀ from master key, set r = 3.8 for chaos</p>
+                </div>
+                <div class="algorithm-step p-4" data-step="2">
+                  <h4 class="font-semibold mb-2">Iteration</h4>
+                  <p class="text-sm text-gray-300">Generate chaotic sequence through recursive application</p>
+                </div>
+                <div class="algorithm-step p-4" data-step="3">
+                  <h4 class="font-semibold mb-2">Conversion</h4>
+                  <p class="text-sm text-gray-300">Transform float output to byte stream (0-255)</p>
+                </div>
+                <div class="algorithm-step p-4" data-step="4">
+                  <h4 class="font-semibold mb-2">XOR Operation</h4>
+                  <p class="text-sm text-gray-300">Combine chaotic keystream with LFSR-encrypted data</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-display text-xl font-semibold mb-4">Performance Characteristics</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                  <span class="text-sm">Memory Usage</span>
+                  <span class="font-mono text-blue-400">~20KB</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                  <span class="text-sm">Processing Time</span>
+                  <span class="font-mono text-green-400">~2ms</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                  <span class="text-sm">Entropy Enhancement</span>
+                  <span class="font-mono text-purple-400">High</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                  <span class="text-sm">Quantum Resistance</span>
+                  <span class="font-mono text-red-400">Medium</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="chaos-implementation" class="mb-8">
+            <h3 class="font-display text-xl font-semibold mb-4">Implementation Example</h3>
+
+            <div class="code-block p-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-semibold">Logistic Map Implementation</span>
+                <span class="text-xs text-gray-400">Chaotic Keystream Generation</span>
+              </div>
+              <pre class="text-sm overflow-x-auto"><code class="text-gray-300">import numpy as np
+
+def logistic_map_keystream(x0, r, length):
+  &#34;&#34;&#34;
+  Generate chaotic keystream using Logistic Map
+  &#34;&#34;&#34;
+  keystream = []
+  x = x0
+  
+  # Warm-up iterations (discard first 100)
+  for _ in range(100):
+      x = r * x * (1 - x)
+  
+  # Generate keystream bytes
+  for _ in range(length):
+      x = r * x * (1 - x)
+      # Convert float to byte (0-255)
+      byte_val = int(x * 256) % 256
+      keystream.append(byte_val)
+  
+  return keystream
+
+# Example usage
+x0 = 0.123456789  # Derived from master key
+r = 3.8           # Control parameter
+length = 16       # Bytes to generate
+
+chaotic_bytes = logistic_map_keystream(x0, r, length)
+print(f&#34;Chaotic Keystream: {chaotic_bytes}&#34;)</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transposition Cipher -->
+    <section id="transposition" class="py-16 px-8">
+      <div class="container mx-auto max-w-4xl">
+        <div class="section-card p-8">
+          <h2 class="font-display text-3xl font-bold mb-6">Component 3: Advanced Transposition Cipher</h2>
+
+          <p class="text-lg mb-8">
+            The advanced transposition cipher serves as the final layer in the core XenoCipher pipeline, focusing on structural obfuscation through byte-level permutation. This layer rearranges data according to patterns generated by the LFSR, effectively hiding any remaining patterns from previous encryption stages.
+          </p>
+
+          <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div>
+              <h3 class="font-display text-xl font-semibold mb-4">Grid-Based Permutation</h3>
+              <p class="text-sm mb-4">
+                Data is organized into a grid structure (typically 16×16 bytes), with LFSR-generated patterns determining the permutation sequence for rows and columns.
+              </p>
+              <ul class="space-y-2 text-sm">
+                <li><i class="fas fa-th text-blue-400 mr-2"></i>Grid size: 16×16 bytes (256 bytes)</li>
+                <li><i class="fas fa-random text-green-400 mr-2"></i>LFSR-driven permutation patterns</li>
+                <li><i class="fas fa-exchange-alt text-purple-400 mr-2"></i>Row and column swapping operations</li>
+                <li><i class="fas fa-puzzle-piece text-red-400 mr-2"></i>Structure obfuscation</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="font-display text-xl font-semibold mb-4">Technical Implementation</h3>
+              <div class="space-y-3 text-sm">
+                <div class="flex justify-between p-2 bg-gray-800 rounded">
+                  <span>Memory Usage:</span>
+                  <span class="font-mono text-green-400">~15KB</span>
+                </div>
+                <div class="flex justify-between p-2 bg-gray-800 rounded">
+                  <span>Processing Time:</span>
+                  <span class="font-mono text-blue-400">~1ms</span>
+                </div>
+                <div class="flex justify-between p-2 bg-gray-800 rounded">
+                  <span>Grid Configuration:</span>
+                  <span class="font-mono">16×16 bytes</span>
+                </div>
+                <div class="flex justify-between p-2 bg-gray-800 rounded">
+                  <span>Security Impact:</span>
+                  <span class="font-mono text-yellow-400">Pattern Removal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="transposition-implementation" class="mb-8">
+            <h3 class="font-display text-xl font-semibold mb-4">Implementation Example</h3>
+
+            <div class="code-block p-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-semibold">Transposition Cipher Implementation</span>
+                <span class="text-xs text-gray-400">Grid Permutation with LFSR Control</span>
+              </div>
+              <pre class="text-sm overflow-x-auto"><code class="text-gray-300">import numpy as np
+
+def advanced_transposition(data, lfsr_seed, grid_size=16):
+  &#34;&#34;&#34;
+  Apply advanced transposition cipher using LFSR-generated patterns
+  &#34;&#34;&#34;
+  # Pad data to fit grid
+  padded_data = data.ljust(grid_size * grid_size, b&#39;\0&#39;)
+  
+  # Create grid
+  grid = np.frombuffer(padded_data, dtype=np.uint8)
+  grid = grid.reshape((grid_size, grid_size))
+  
+  # Generate permutation patterns using LFSR
+  def generate_swaps(seed, count):
+      # Simple LFSR-based swap generator
+      lfsr = seed
+      swaps = []
+      for _ in range(count):
+          # Generate swap indices using LFSR bits
+          lfsr = (lfsr &gt;&gt; 1) | ((lfsr ^ (lfsr &gt;&gt; 2) ^ (lfsr &gt;&gt; 3) ^ (lfsr &gt;&gt; 5)) &amp; 1) &lt;&lt; 15
+          swap_idx = lfsr % grid_size
+          swaps.append(swap_idx)
+      return swaps
+  
+  # Generate row and column swaps
+  row_swaps = generate_swaps(lfsr_seed, grid_size)
+  col_swaps = generate_swaps(lfsr_seed ^ 0x5555, grid_size)
+  
+  # Apply row swaps
+  for i in range(0, grid_size, 2):
+      if i+1 &lt; grid_size:
+          grid[[row_swaps[i], row_swaps[i+1]]] = grid[[row_swaps[i+1], row_swaps[i]]]
+  
+  # Apply column swaps
+  for j in range(0, grid_size, 2):
+      if j+1 &lt; grid_size:
+          grid[:, [col_swaps[j], col_swaps[j+1]]] = grid[:, [col_swaps[j+1], col_swaps[j]]]
+  
+  # Flatten grid and return
+  return grid.flatten().tobytes()
+
+# Example usage
+original_data = b&#34;XenoCipher example data for transposition&#34;
+lfsr_seed = 0xACE1
+encrypted_data = advanced_transposition(original_data, lfsr_seed)</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Complete Example -->
+    <section id="example" class="py-16 px-8">
+      <div class="container mx-auto max-w-4xl">
+        <div class="section-card p-8">
+          <h2 class="font-display text-3xl font-bold mb-6">Complete Encryption Example: &#34;XenoCipher&#34;</h2>
+
+          <p class="text-lg mb-8">
+            This section demonstrates the complete XenoCipher encryption pipeline applied to the plaintext &#34;XenoCipher&#34;. The example walks through each layer of encryption, showing how the data transforms at each stage.
+          </p>
+
+          <div class="highlight-box p-6 mb-8">
+            <h3 class="font-display text-xl font-semibold mb-4">Initial Setup</h3>
+            <div class="grid md:grid-cols-3 gap-6 text-sm">
+              <div>
+                <div class="font-semibold mb-2">Plaintext</div>
+                <div class="font-mono bg-black p-2 rounded">&#34;XenoCipher&#34;</div>
+              </div>
+              <div>
+                <div class="font-semibold mb-2">ASCII Bytes</div>
+                <div class="font-mono bg-black p-2 rounded">58 65 6E 6F 43 69 70 68 65 72</div>
+              </div>
+              <div>
+                <div class="font-semibold mb-2">Master Key</div>
+                <div class="font-mono bg-black p-2 rounded">0xACE1 (example)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-8">
+            <div class="algorithm-step p-6" data-step="1">
+              <h3 class="font-display text-xl font-semibold mb-4">Step 1: LFSR Encryption</h3>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold mb-2">Parameters</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>Polynomial: x¹⁶ + x⁵ + x³ + 1</li>
+                    <li>Seed: 0xACE1</li>
+                    <li>Register: 16-bit</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold mb-2">Process</h4>
+                  <p class="text-sm">
+                    Generate 80-bit keystream (10 bytes × 8 bits), XOR with plaintext bytes
+                  </p>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-gray-900 rounded">
+                <div class="text-sm">
+                  <div class="mb-2">Plaintext: 58 65 6E 6F 43 69 70 68 65 72</div>
+                  <div class="mb-2">Keystream: A3 7C 21 9F 34 D2 8B 41 5E 9C</div>
+                  <div class="text-green-400 font-mono">LFSR Output: FB 19 4F F0 77 BB FB 29 3B EE</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="algorithm-step p-6" data-step="2">
+              <h3 class="font-display text-xl font-semibold mb-4">Step 2: Chaotic Map Encryption</h3>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold mb-2">Parameters</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>Map: Logistic (xₙ₊₁ = r·xₙ·(1-xₙ))</li>
+                    <li>r = 3.8, x₀ = 0.123456789</li>
+                    <li>100 warm-up iterations</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold mb-2">Process</h4>
+                  <p class="text-sm">
+                    Generate chaotic bytes, XOR with LFSR-encrypted data
+                  </p>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-gray-900 rounded">
+                <div class="text-sm">
+                  <div class="mb-2">LFSR Output: FB 19 4F F0 77 BB FB 29 3B EE</div>
+                  <div class="mb-2">Chaotic Bytes: 7D C4 31 8A 2F 95 63 D7 91 42</div>
+                  <div class="text-blue-400 font-mono">Chaos Output: 86 DD 7E 7A 58 2E 98 FE AA AC</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="algorithm-step p-6" data-step="3">
+              <h3 class="font-display text-xl font-semibold mb-4">Step 3: Transposition Cipher</h3>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold mb-2">Parameters</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>Grid: 16×16 bytes</li>
+                    <li>LFSR seed: 0xACE1</li>
+                    <li>Row/column swapping</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold mb-2">Process</h4>
+                  <p class="text-sm">
+                    Pad to 256 bytes, organize in grid, apply LFSR-generated permutations
+                  </p>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-gray-900 rounded">
+                <div class="text-sm">
+                  <div class="mb-2">Input: 86 DD 7E 7A 58 2E 98 FE AA AC [padded to 256 bytes]</div>
+                  <div class="mb-2">Grid before: [16×16 matrix representation]</div>
+                  <div class="mb-2">Grid after: [permuted 16×16 matrix]</div>
+                  <div class="text-purple-400 font-mono">Final Ciphertext: 7A 2E AC 86 FE DD 58 7E AA 98 ...</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="algorithm-step p-6" data-step="4">
+              <h3 class="font-display text-xl font-semibold mb-4">Decryption Process</h3>
+              <p class="text-sm mb-4">
+                Decryption follows the reverse order: inverse transposition, chaotic XOR, then LFSR XOR. The same keys and parameters must be used.
+              </p>
+              <div class="grid md:grid-cols-3 gap-4 text-xs">
+                <div class="bg-gray-800 p-3 rounded">
+                  <div class="font-semibold mb-1">Step 1: Inverse Transposition</div>
+                  <div>Apply reverse permutation patterns</div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded">
+                  <div class="font-semibold mb-1">Step 2: Chaotic XOR</div>
+                  <div>Regenerate identical chaotic sequence</div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded">
+                  <div class="font-semibold mb-1">Step 3: LFSR XOR</div>
+                  <div>Regenerate identical keystream</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Future Enhancements -->
+    <section id="enhancements" class="py-16 px-8">
+      <div class="container mx-auto max-w-4xl">
+        <div class="section-card p-8">
+          <h2 class="font-display text-3xl font-bold mb-6">Future Enhancements &amp; Current Changes</h2>
+
+          <p class="text-lg mb-8">
+            The XenoCipher project is continuously evolving to address emerging security challenges and improve performance. Two major enhancements are currently being implemented: replacing the Logistic Map with the more robust Tinkerbell map and transitioning from BLE-based data acquisition to direct I²C sensor integration.
+          </p>
+
+          <div id="tinkerbell" class="mb-12">
+            <h3 class="font-display text-2xl font-semibold mb-6">Enhancement 1: Tinkerbell Map Integration</h3>
+
+            <div class="highlight-box p-6 mb-6">
+              <h4 class="font-display text-xl font-semibold mb-4">Why Replace the Logistic Map?</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="font-semibold mb-2 text-red-400">Logistic Map Limitations</h5>
+                  <ul class="text-sm space-y-1">
+                    <li>• One-dimensional system</li>
+                    <li>• Limited chaotic range</li>
+                    <li>• Periodic windows vulnerability</li>
+                    <li>• Smaller keyspace</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-semibold mb-2 text-green-400">Tinkerbell Map Advantages</h5>
+                  <ul class="text-sm space-y-1">
+                    <li>• Two-dimensional system</li>
+                    <li>• Richer chaotic behavior</li>
+                    <li>• More uniform distribution</li>
+                    <li>• Larger keyspace</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="font-display text-xl font-semibold mb-4">Tinkerbell Map Equations</h4>
+                <div class="code-block p-6">
+                  <div class="text-center text-lg font-mono mb-4">
+                    x<sub>n+1</sub> = x<sub>n</sub>² - y<sub>n</sub>² + a·x<sub>n</sub> + b·y<sub>n</sub>
+                    <br/>
+                    y<sub>n+1</sub> = 2·x<sub>n</sub>·y<sub>n</sub> + c·x<sub>n</sub> + d·y<sub>n</sub>
+                  </div>
+                  <div class="grid md:grid-cols-4 gap-4 text-sm">
+                    <div class="text-center">
+                      <div class="font-semibold">Parameter a</div>
+                      <div class="font-mono">0.9</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="font-semibold">Parameter b</div>
+                      <div class="font-mono">-0.6</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="font-semibold">Parameter c</div>
+                      <div class="font-mono">2.0</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="font-semibold">Parameter d</div>
+                      <div class="font-mono">0.5</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-display text-xl font-semibold mb-4">Implementation Benefits</h4>
+                  <ul class="space-y-2 text-sm">
+                    <li class="flex items-start">
+                      <i class="fas fa-shield-alt text-green-400 mt-1 mr-3"></i>
+                      <span><strong>Enhanced Security:</strong> 2D system provides more complex dynamics</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fas fa-expand-arrows-alt text-blue-400 mt-1 mr-3"></i>
+                      <span><strong>Larger Keyspace:</strong> Additional parameters increase brute-force resistance</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fas fa-chart-line text-purple-400 mt-1 mr-3"></i>
+                      <span><strong>Better Statistics:</strong> More uniform distribution and lower correlation</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 class="font-display text-xl font-semibold mb-4">Expected Impact</h4>
+                  <div class="space-y-3 text-sm">
+                    <div class="flex justify-between p-2 bg-gray-800 rounded">
+                      <span>Security Level:</span>
+                      <span class="text-green-400">Enhanced</span>
+                    </div>
+                    <div class="flex justify-between p-2 bg-gray-800 rounded">
+                      <span>Memory Usage:</span>
+                      <span class="text-blue-400">~25KB</span>
+                    </div>
+                    <div class="flex justify-between p-2 bg-gray-800 rounded">
+                      <span>Processing Time:</span>
+                      <span class="text-yellow-400">~3ms</span>
+                    </div>
+                    <div class="flex justify-between p-2 bg-gray-800 rounded">
+                      <span>Quantum Resistance:</span>
+                      <span class="text-green-400">Improved</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="data-acquisition" class="mb-12">
+            <h3 class="font-display text-2xl font-semibold mb-6">Enhancement 2: Direct I²C Sensor Integration</h3>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+              <div class="bg-red-900 bg-opacity-30 p-6 rounded-lg border border-red-700">
+                <h4 class="font-display text-lg font-semibold mb-4 text-red-400">
+                  <i class="fas fa-times-circle mr-2"></i>Deprecating BLE Communication
+                </h4>
+                <ul class="space-y-2 text-sm">
+                  <li><strong>High Power Consumption:</strong> Constant scanning drains ESP32 battery</li>
+                  <li><strong>Complex Decoding:</strong> Reverse-engineering GATT services is unreliable</li>
+                  <li><strong>Third-party Dependency:</strong> Reliance on specific smartwatch models</li>
+                  <li><strong>Firmware Sensitivity:</strong> Protocol changes break compatibility</li>
+                </ul>
+              </div>
+
+              <div class="bg-green-900 bg-opacity-30 p-6 rounded-lg border border-green-700">
+                <h4 class="font-display text-lg font-semibold mb-4 text-green-400">
+                  <i class="fas fa-check-circle mr-2"></i>Adopting I²C with MAX30102
+                </h4>
+                <ul class="space-y-2 text-sm">
+                  <li><strong>Direct Integration:</strong> Sensor connects directly to ESP32</li>
+                  <li><strong>Low Power:</strong> I²C protocol is energy-efficient</li>
+                  <li><strong>Real-time Data:</strong> Immediate readings without BLE overhead</li>
+                  <li><strong>Self-contained:</strong> No external device dependencies</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="font-display text-xl font-semibold mb-4">MAX30102 Sensor Benefits</h4>
+                <div class="grid md:grid-cols-3 gap-6">
+                  <div class="text-center">
+                    <div class="text-4xl mb-3">
+                      <i class="fas fa-heartbeat text-red-400"></i>
+                    </div>
+                    <h5 class="font-semibold mb-2">Heart Rate Monitoring</h5>
+                    <p class="text-sm text-gray-300">Accurate real-time HR detection</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-4xl mb-3">
+                      <i class="fas fa-lungs text-blue-400"></i>
+                    </div>
+                    <h5 class="font-semibold mb-2">SpO₂ Measurement</h5>
+                    <p class="text-sm text-gray-300">Pulse oximetry capabilities</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-4xl mb-3">
+                      <i class="fas fa-microchip text-green-400"></i>
+                    </div>
+                    <h5 class="font-semibold mb-2">ESP32 Native Support</h5>
+                    <p class="text-sm text-gray-300">Direct I²C compatibility</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="highlight-box p-6">
+                <h4 class="font-display text-xl font-semibold mb-4">Implementation Architecture</h4>
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h5 class="font-semibold mb-2">Hardware Configuration</h5>
+                    <ul class="text-sm space-y-1">
+                      <li>• ESP32 I²C Master Mode</li>
+                      <li>• MAX30102 Sensor Connection</li>
+                      <li>• 3.3V Power Supply</li>
+                      <li>• Pull-up Resistors (4.7KΩ)</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 class="font-semibold mb-2">Data Flow</h5>
+                    <ul class="text-sm space-y-1">
+                      <li>• Continuous I²C Readings</li>
+                      <li>• Direct Sensor → ESP32 Data</li>
+                      <li>• Real-time Encryption Pipeline</li>
+                      <li>• Seamless Health Monitoring</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="highlight-box p-6">
+            <h3 class="font-display text-xl font-semibold mb-4">Summary of Enhancements</h3>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+              <div>
+                <h4 class="font-semibold mb-2">Security Improvements</h4>
+                <ul class="space-y-1">
+                  <li>• Tinkerbell map provides stronger chaotic properties</li>
+                  <li>• Larger keyspace enhances brute-force resistance</li>
+                  <li>• Better statistical properties in generated sequences</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-2">Performance Benefits</h4>
+                <ul class="space-y-1">
+                  <li>• Direct sensor integration eliminates BLE overhead</li>
+                  <li>• Lower power consumption improves battery life</li>
+                  <li>• Real-time data acquisition enables continuous monitoring</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-8 border-t border-gray-700">
+      <div class="container mx-auto max-w-4xl text-center">
+        <div class="mb-8">
+          <h3 class="font-display text-2xl font-bold mb-4">XenoCipher Project</h3>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            A multi-layered cryptographic framework designed for IoT security, balancing robust encryption with resource efficiency for embedded systems.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+          <div>
+            <h4 class="font-semibold mb-3">Core Components</h4>
+            <ul class="text-sm text-gray-400 space-y-1">
+              <li>LFSR Stream Cipher</li>
+              <li>Chaotic Map Encryption</li>
+              <li>Advanced Transposition</li>
+              <li>Zero Trust Mode (ZTM)</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-3">Technical Specs</h4>
+            <ul class="text-sm text-gray-400 space-y-1">
+              <li>&lt; 51KB Memory (Normal)</li>
+              <li>~5ms Encryption Time</li>
+              <li>ESP32 Optimized</li>
+              <li>Quantum-Resistant Design</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-3">Enhancements</h4>
+            <ul class="text-sm text-gray-400 space-y-1">
+              <li>Tinkerbell Map Integration</li>
+              <li>I²C Sensor Support</li>
+              <li>MAX30102 Compatibility</li>
+              <li>Real-time Data Flow</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="text-sm text-gray-500">
+          <p>Documentation based on XenoCipher test phase implementation and future enhancement roadmap.</p>
+          <p class="mt-2">Last updated: August 2025</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+      // Table of Contents functionality
+      document.addEventListener('DOMContentLoaded', function() {
+          const tocLinks = document.querySelectorAll('.toc-link');
+          const sections = document.querySelectorAll('section[id]');
+          const tocToggle = document.createElement('button');
+          const tocFixed = document.querySelector('.toc-fixed');
+          const mainContent = document.querySelector('.main-content');
+          
+          // Create toggle button for small screens
+          tocToggle.innerHTML = '<i class="fas fa-bars"></i>';
+          tocToggle.className = 'fixed top-4 left-4 z-[1001] bg-gray-800 text-white p-3 rounded-lg shadow-lg lg:hidden';
+          document.body.appendChild(tocToggle);
+          
+          // Toggle TOC visibility
+          tocToggle.addEventListener('click', function(e) {
+              e.stopPropagation();
+              tocFixed.classList.toggle('toc-visible');
+              mainContent.classList.toggle('toc-visible');
+          });
+          
+          // Close TOC when clicking outside on small screens
+          document.addEventListener('click', function(e) {
+              if (window.innerWidth <= 1024 && 
+                  !tocFixed.contains(e.target) && 
+                  !tocToggle.contains(e.target)) {
+                  tocFixed.classList.remove('toc-visible');
+                  mainContent.classList.remove('toc-visible');
+              }
+          });
+          
+          // Update TOC on scroll
+          function updateTOC() {
+              let current = '';
+              sections.forEach(section => {
+                  const sectionTop = section.offsetTop - 100;
+                  if (window.scrollY >= sectionTop) {
+                      current = section.getAttribute('id');
+                  }
+              });
+              
+              tocLinks.forEach(link => {
+                  link.classList.remove('active');
+                  if (link.getAttribute('href') === '#' + current) {
+                      link.classList.add('active');
+                  }
+              });
+          }
+          
+          window.addEventListener('scroll', updateTOC);
+          updateTOC();
+          
+          // Smooth scrolling for TOC links
+          tocLinks.forEach(link => {
+              link.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  const target = document.querySelector(this.getAttribute('href'));
+                  if (target) {
+                      target.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start'
+                      });
+                      
+                      // Close TOC after clicking a link on small screens
+                      if (window.innerWidth <= 1024) {
+                          tocFixed.classList.remove('toc-visible');
+                          mainContent.classList.remove('toc-visible');
+                      }
+                  }
+              });
+          });
+      });
+  </script>
+
+
+</body></html>

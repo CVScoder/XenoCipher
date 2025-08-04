@@ -784,9 +784,9 @@ def error_route():
     logger.error(f"Attack route error: {e}")
     return jsonify({'error': str(e)}), 500
 
-@app.route('/comparison.html')
+@app.route('/basic_encryption.html')
 def comparison():
-    return send_from_directory('static', 'comparison.html')
+    return send_from_directory('static', 'basic_encryption.html')
 
 @app.route('/encryption.js')
 def encryption_js():

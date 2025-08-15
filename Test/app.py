@@ -785,8 +785,12 @@ def error_route():
     return jsonify({'error': str(e)}), 500
 
 @app.route('/basic_encryption.html')
-def comparison():
+def basic_encryption():
     return send_from_directory('static', 'basic_encryption.html')
+
+@app.route('/comparison.html')
+def comparison():
+    return send_from_directory('static', 'comparison.html')
 
 @app.route('/encryption.js')
 def encryption_js():

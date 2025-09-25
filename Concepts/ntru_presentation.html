@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTRU: A Lattice-Based Public Key Cryptosystem</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 40px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+        h3 {
+            font-size: 1.4em;
+            margin-top: 30px;
+        }
+        .slide {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        .code {
+            background-color: #f8f8f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .diagram {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .diagram img {
+            max-width: 100%;
+            height: auto;
+        }
+        .note {
+            background-color: #fffde7;
+            border-left: 4px solid #ffd600;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .advantage {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .math {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+        }
+        .two-column {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+        }
+        @media (max-width: 768px) {
+            .two-column {
+                flex-direction: column;
+            }
+        }
+    </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <div class="slide">
+        <h1>NTRU: A Lattice-Based Public Key Cryptosystem</h1>
+        <p style="text-align: center; font-size: 1.2em;">A Comprehensive Overview of NTRU Cryptography</p>
+        <div class="diagram">
+            <!-- ASCII art representation of lattice -->
+            <pre style="font-size: 0.8em; line-height: 1.2;">
+  • • • • • • • • • •
+  •   •   •   •   •
+  • • • • • • • • • •
+  •   •   •   •   •
+  • • • • • • • • • •
+  •   •   •   •   •
+  • • • • • • • • • •
+    NTRU Lattice
+            </pre>
+        </div>
+        <p style="text-align: center;">
+            <em>Based on the hardness of lattice problems in mathematics</em>
+        </p>
+    </div>
+
+    <div class="slide">
+        <h2>Table of Contents</h2>
+        <ol>
+            <li><a href="#introduction">Introduction to NTRU</a></li>
+            <li><a href="#mathematical">Mathematical Foundation</a></li>
+            <li><a href="#algorithm">NTRU Algorithm</a></li>
+            <li><a href="#implementation">Implementation Details</a></li>
+            <li><a href="#security">Security Considerations</a></li>
+            <li><a href="#applications">Applications and Use Cases</a></li>
+            <li><a href="#advantages">Advantages Over Traditional Cryptosystems</a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
+        </ol>
+    </div>
+
+    <div id="introduction" class="slide">
+        <h2>1. Introduction to NTRU</h2>
+        
+        <h3>What is NTRU?</h3>
+        <ul>
+            <li>NTRU (Nth degree TRUncated polynomial ring) is a lattice-based public key cryptosystem</li>
+            <li>Created by Joseph Silverman, Jeffery Hoffstein, and Jill Pipher in 1996</li>
+            <li>Released into the public domain in 2013</li>
+            <li>One of the leading candidates for post-quantum cryptography</li>
+        </ul>
+
+        <div class="note">
+            <strong>Historical Note:</strong> NTRU was initially developed as a commercial product by NTRU Cryptosystems, Inc., before being released to the public domain.
+        </div>
+
+        <h3>Why NTRU Matters</h3>
+        <ul>
+            <li><strong>Quantum-resistant:</strong> Secure against attacks from quantum computers</li>
+            <li><strong>Efficient:</strong> Faster than RSA and ECC for comparable security levels</li>
+            <li><strong>Versatile:</strong> Suitable for encryption and digital signatures</li>
+            <li><strong>Practical:</strong> Implementable on constrained devices</li>
+        </ul>
+
+        <div class="advantage">
+            <strong>Key Advantage:</strong> While RSA and ECC can be broken by quantum computers using Shor's algorithm, NTRU's security is based on lattice problems that are believed to be resistant to quantum attacks.
+        </div>
+    </div>
+
+    <div id="mathematical" class="slide">
+        <h2>2. Mathematical Foundation</h2>
+
+        <h3>Polynomial Rings</h3>
+        <p>NTRU operates in a truncated polynomial ring:</p>
+        <ul>
+            <li>Ring: R = Z[X]/(X<sup>N</sup> - 1)</li>
+            <li>Operations are performed modulo X<sup>N</sup> - 1</li>
+            <li>Polynomials have degree at most N-1</li>
+        </ul>
+
+        <div class="diagram">
+            <pre>
+f(x) = a₀ + a₁x + a₂x² + ... + aₙ₋₁xⁿ⁻¹
+
+Where:
+- Each coefficient aᵢ is an integer
+- Operations are performed modulo p or q
+- Polynomial multiplication is performed modulo (xⁿ - 1)
+            </pre>
+        </div>
+
+        <h3>Key Parameters</h3>
+        <ul>
+            <li><strong>N:</strong> Polynomial degree (determines security level)</li>
+            <li><strong>p:</strong> Small modulus (typically 3)</li>
+            <li><strong>q:</strong> Large modulus (typically power of 2)</li>
+            <li><strong>d:</strong> Number of coefficients set to 1 in certain polynomials</li>
+        </ul>
+
+        <h3>Modular Arithmetic</h3>
+        <p>Operations performed modulo p and q:</p>
+        <ul>
+            <li>For polynomials a and b:</li>
+            <ul>
+                <li>a + b (mod q): Add coefficients modulo q</li>
+                <li>a * b (mod q): Multiply polynomials, reduce coefficients modulo q</li>
+            </ul>
+        </ul>
+
+        <div class="code">
+// Example of polynomial multiplication in truncated ring
+void NTRU::poly_mult(const Poly& a, const Poly& b, Poly& res) {
+    std::fill(res.coeffs.begin(), res.coeffs.end(), 0);
+    for (int i = 0; i < NTRU_N; ++i) {
+        for (int j = 0; j < NTRU_N; ++j) {
+            int idx = (i + j) % NTRU_N;  // Reduction modulo X^N - 1
+            res.coeffs[idx] += a.coeffs[i] * b.coeffs[j];
+        }
+    }
+    res.mod(NTRU_Q);  // Coefficient reduction modulo q
+}
+        </div>
+    </div>
+
+    <div id="algorithm" class="slide">
+        <h2>3. NTRU Algorithm</h2>
+
+        <div class="two-column">
+            <div class="column">
+                <h3>Key Generation</h3>
+                <ol>
+                    <li>Choose random "small" polynomials f and g</li>
+                    <li>Compute inverses:
+                        <ul>
+                            <li>f<sub>p</sub>: inverse of f modulo p</li>
+                            <li>f<sub>q</sub>: inverse of f modulo q</li>
+                        </ul>
+                    </li>
+                    <li>Calculate public key: h = p * f<sub>q</sub> * g (mod q)</li>
+                    <li>Private key: (f, f<sub>p</sub>)</li>
+                    <li>Public key: h</li>
+                </ol>
+            </div>
+            <div class="column">
+                <div class="code">
+void NTRU::generate_keys(NTRUKeyPair& kp) {
+    Poly g;
+    random_ternary(kp.f, NTRU_D);
+    random_ternary(g, NTRU_D);
+    Poly f_inv;
+    poly_inv(kp.f, f_inv, NTRU_Q);
+    poly_mult(g, f_inv, kp.h);
+    for (int i = 0; i < NTRU_N; ++i) 
+        kp.h.coeffs[i] = (NTRU_P * kp.h.coeffs[i]) % NTRU_Q;
+}
+                </div>
+            </div>
+        </div>
+
+        <div class="diagram">
+            <pre>
+Key Generation Process:
+
+1. Generate random small polynomials f and g
+   f = -1 + X + X² - X⁴ + X⁶ + X⁹ - X¹⁰
+   g = -1 + X + X² + X³ - X⁸ - X¹⁰
+
+2. Compute inverses f⁻¹ mod p and f⁻¹ mod q
+   f_p = 1 + 2X + 2X³ + 2X⁴ + X⁵ + 2X⁷ + X⁸ + 2X⁹
+   f_q = 5 + 9X + 6X² + 16X³ + 4X⁴ + 15X⁵ + 16X⁶ + 22X⁷ + 20X⁸ + 18X⁹ + 30X¹⁰
+
+3. Calculate public key h = p·f_q·g mod q
+   h = 18 + 6X + 21X² + 16X³ + 2X⁴ + 21X⁵ + X⁶ + 17X⁷ + 30X⁸ + 3X⁹ + 25X¹⁰
+            </pre>
+        </div>
+
+        <div class="two-column">
+            <div class="column">
+                <h3>Encryption</h3>
+                <ol>
+                    <li>Convert message to polynomial m with coefficients modulo p</li>
+                    <li>Choose random "small" polynomial r</li>
+                    <li>Compute ciphertext: e = r * h + m (mod q)</li>
+                </ol>
+                <div class="code">
+void NTRU::encrypt(const Poly& m, const Poly& h, Poly& e) {
+    Poly r;
+    random_ternary(r, NTRU_D);
+    poly_mult(r, h, e);
+    for (int i = 0; i < NTRU_N; ++i) 
+        e.coeffs[i] = (e.coeffs[i] + m.coeffs[i]) % NTRU_Q;
+}
+                </div>
+            </div>
+            <div class="column">
+                <h3>Decryption</h3>
+                <ol>
+                    <li>Compute a = f * e (mod q)</li>
+                    <li>Compute b = a (mod p)</li>
+                    <li>Recover message: m = f<sub>p</sub> * b (mod p)</li>
+                </ol>
+                <div class="code">
+void NTRU::decrypt(const Poly& e, const Poly& f, Poly& m) {
+    Poly a;
+    poly_mult(e, f, a);
+    for (int i = 0; i < NTRU_N; ++i) 
+        m.coeffs[i] = a.coeffs[i] % NTRU_P;
+}
+                </div>
+            </div>
+        </div>
+
+        <h3>Why Decryption Works</h3>
+        <div class="note">
+            <p>Starting with e = r * h + m (mod q)</p>
+            <p>Substitute h = p * f<sub>q</sub> * g:</p>
+            <p>e = r * (p * f<sub>q</sub> * g) + m (mod q)</p>
+            <p>Multiply by f:</p>
+            <p>f * e = f * r * p * f<sub>q</sub> * g + f * m (mod q)</p>
+            <p>Since f * f<sub>q</sub> = 1 (mod q):</p>
+            <p>f * e = p * r * g + f * m (mod q)</p>
+            <p>When we take modulo p:</p>
+            <p>f * e (mod p) = f * m (mod p)</p>
+            <p>Multiply by f<sub>p</sub>:</p>
+            <p>f<sub>p</sub> * f * e (mod p) = f<sub>p</sub> * f * m (mod p) = m (mod p)</p>
+        </div>
+    </div>
+
+    <div id="implementation" class="slide">
+        <h2>4. Implementation Details</h2>
+
+        <h3>Code Structure</h3>
+        <ul>
+            <li><strong>Poly class:</strong> Represents polynomials with coefficient operations</li>
+            <li><strong>NTRUKeyPair class:</strong> Holds public key (h) and private key (f)</li>
+            <li><strong>NTRU class:</strong> Implements core cryptographic operations</li>
+        </ul>
+
+        <h3>Key Parameters in Our Implementation</h3>
+        <div class="code">
+#define NTRU_N 251   // Polynomial degree
+#define NTRU_P 3     // Small modulus
+#define NTRU_Q 128   // Large modulus
+#define NTRU_D 71    // Number of 1's in ternary polynomials
+        </div>
+
+        <h3>Core Functions</h3>
+        <table>
+            <tr>
+                <th>Function</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td>generate_keys()</td>
+                <td>Creates key pair (public key h and private key f)</td>
+            </tr>
+            <tr>
+                <td>encrypt()</td>
+                <td>Encrypts message using public key</td>
+            </tr>
+            <tr>
+                <td>decrypt()</td>
+                <td>Decrypts ciphertext using private key</td>
+            </tr>
+            <tr>
+                <td>poly_mult()</td>
+                <td>Performs polynomial multiplication in the ring</td>
+            </tr>
+            <tr>
+                <td>poly_inv()</td>
+                <td>Computes polynomial inverse (currently a placeholder)</td>
+            </tr>
+            <tr>
+                <td>random_ternary()</td>
+                <td>Generates random ternary polynomials (coefficients in {-1,0,1})</td>
+            </tr>
+            <tr>
+                <td>bytes_to_poly()/poly_to_bytes()</td>
+                <td>Conversion between byte arrays and polynomials</td>
+            </tr>
+        </table>
+
+        <h3>Random Ternary Polynomial Generation</h3>
+        <div class="code">
+void NTRU::random_ternary(Poly& poly, int d) {
+    std::vector<int> pos(NTRU_N);
+    for (int i = 0; i < NTRU_N; ++i) pos[i] = i;
+    // Seed RNG without Arduino entropy when building for server
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::shuffle(pos.begin(), pos.end(), gen);
+
+    std::fill(poly.coeffs.begin(), poly.coeffs.end(), 0);
+    for (int i = 0; i < d; ++i) poly.coeffs[pos[i]] = 1;
+    for (int i = d; i < 2*d; ++i) poly.coeffs[pos[i]] = -1;
+}
+        </div>
+
+        <div class="note">
+            <strong>Implementation Note:</strong> The current implementation has a placeholder for the polynomial inverse function. In a production implementation, this would be replaced with a proper algorithm such as the Extended Euclidean Algorithm or Newton's Method for computing inverses in the ring.
+        </div>
+    </div>
+
+    <div id="security" class="slide">
+        <h2>5. Security Considerations</h2>
+
+        <h3>Security Strength</h3>
+        <ul>
+            <li>Security based on the hardness of Shortest Vector Problem (SVP) in lattices</li>
+            <li>Quantum-resistant: No known efficient quantum algorithm for SVP</li>
+            <li>Security level depends on parameter selection (N, p, q)</li>
+        </ul>
+
+        <div class="diagram">
+            <pre>
+Lattice Problems:
+
+Shortest Vector Problem (SVP):
+  Find the shortest non-zero vector in a lattice
+
+Closest Vector Problem (CVP):
+  Find the closest lattice point to a given point
+
+NTRU security relies on the hardness of these problems
+            </pre>
+        </div>
+
+        <h3>Parameter Selection</h3>
+        <table>
+            <tr>
+                <th>Parameter Set</th>
+                <th>N</th>
+                <th>p</th>
+                <th>q</th>
+                <th>Security Level</th>
+            </tr>
+            <tr>
+                <td>NTRU-251</td>
+                <td>251</td>
+                <td>3</td>
+                <td>128</td>
+                <td>Moderate (~80 bits)</td>
+            </tr>
+            <tr>
+                <td>NTRU-439</td>
+                <td>439</td>
+                <td>3</td>
+                <td>2048</td>
+                <td>High (~128 bits)</td>
+            </tr>
+            <tr>
+                <td>NTRU-743</td>
+                <td>743</td>
+                <td>3</td>
+                <td>2048</td>
+                <td>Very High (~256 bits)</td>
+            </tr>
+        </table>
+
+        <h3>Known Attacks</h3>
+        <ul>
+            <li><strong>Lattice-based attacks:</strong> Using lattice reduction algorithms like LLL or BKZ</li>
+            <li><strong>Meet-in-the-middle attacks:</strong> Targeting the structure of the private key</li>
+            <li><strong>Hybrid attacks:</strong> Combining lattice reduction with meet-in-the-middle techniques</li>
+        </ul>
+
+        <div class="warning">
+            <strong>Security Warning:</strong> The placeholder implementation of poly_inv() in the provided code is not secure and should be replaced with a proper implementation for production use.
+        </div>
+
+        <h3>Decryption Failure Rate</h3>
+        <p>NTRU can experience decryption failures when parameters are not chosen carefully:</p>
+        <ul>
+            <li>Occurs when coefficients of p*r*g + f*m exceed q/2</li>
+            <li>Probability depends on parameter selection</li>
+            <li>Modern NTRU implementations use parameters that make failures negligibly rare</li>
+        </ul>
+    </div>
+
+    <div id="applications" class="slide">
+        <h2>6. Applications and Use Cases</h2>
+
+        <h3>IoT Security</h3>
+        <ul>
+            <li>Lightweight implementation suitable for constrained devices</li>
+            <li>Low memory footprint compared to RSA</li>
+            <li>Faster key generation and encryption/decryption</li>
+            <li>Suitable for smart home devices, industrial sensors, and wearables</li>
+        </ul>
+
+        <h3>Secure Communications</h3>
+        <ul>
+            <li>TLS/SSL implementations</li>
+            <li>VPN protocols</li>
+            <li>Secure messaging applications</li>
+            <li>Email encryption</li>
+        </ul>
+
+        <h3>Long-term Data Protection</h3>
+        <ul>
+            <li>Protection against future quantum computers</li>
+            <li>Archival encryption</li>
+            <li>Government and military applications</li>
+            <li>Healthcare and financial data protection</li>
+        </ul>
+
+        <h3>Hybrid Cryptosystems</h3>
+        <ul>
+            <li>Combined with symmetric encryption</li>
+            <li>NTRU for key exchange, AES for data encryption</li>
+            <li>Provides both quantum resistance and high performance</li>
+        </ul>
+
+        <div class="diagram">
+            <pre>
+Hybrid Encryption System:
+
+[Sender]                                [Receiver]
+   |                                        |
+   | Generate random                        |
+   | AES key                                |
+   |                                        |
+   | Encrypt AES key                        |
+   | with NTRU                              |
+   |                                        |
+   | Encrypt message                        |
+   | with AES                               |
+   |                                        |
+   |       Encrypted AES key (NTRU)         |
+   |--------------------------------------->|
+   |                                        | Decrypt AES key
+   |                                        | with NTRU private key
+   |                                        |
+   |       Encrypted message (AES)          |
+   |--------------------------------------->|
+   |                                        | Decrypt message
+   |                                        | with AES key
+            </pre>
+        </div>
+    </div>
+
+    <div id="advantages" class="slide">
+        <h2>7. Advantages Over Traditional Cryptosystems</h2>
+
+        <h3>Performance Comparison</h3>
+        <table>
+            <tr>
+                <th>Operation</th>
+                <th>NTRU</th>
+                <th>RSA</th>
+                <th>ECC</th>
+            </tr>
+            <tr>
+                <td>Key Generation</td>
+                <td>Fast</td>
+                <td>Slow</td>
+                <td>Medium</td>
+            </tr>
+            <tr>
+                <td>Encryption</td>
+                <td>Very Fast</td>
+                <td>Medium</td>
+                <td>Fast</td>
+            </tr>
+            <tr>
+                <td>Decryption</td>
+                <td>Fast</td>
+                <td>Slow</td>
+                <td>Fast</td>
+            </tr>
+            <tr>
+                <td>Key Size</td>
+                <td>Medium</td>
+                <td>Large</td>
+                <td>Small</td>
+            </tr>
+            <tr>
+                <td>Quantum Resistance</td>
+                <td>Yes</td>
+                <td>No</td>
+                <td>No</td>
+            </tr>
+        </table>
+
+        <h3>Post-Quantum Security</h3>
+        <ul>
+            <li>RSA and ECC are vulnerable to Shor's algorithm on quantum computers</li>
+            <li>NTRU remains secure in the quantum computing era</li>
+            <li>NIST Post-Quantum Cryptography standardization candidate</li>
+        </ul>
+
+        <div class="advantage">
+            <strong>Key Advantage:</strong> NTRU offers a unique combination of quantum resistance, performance efficiency, and practical implementation characteristics that make it suitable for a wide range of applications from constrained IoT devices to high-security government systems.
+        </div>
+
+        <h3>Efficiency</h3>
+        <ul>
+            <li>Lower computational requirements</li>
+            <li>Faster encryption and decryption</li>
+            <li>Smaller ciphertext expansion</li>
+            <li>More efficient on constrained devices</li>
+        </ul>
+
+        <h3>Practical Considerations</h3>
+        <ul>
+            <li>Patent-free (since 2013)</li>
+            <li>Open-source implementations available</li>
+            <li>Actively researched and improved</li>
+            <li>Growing ecosystem of tools and libraries</li>
+        </ul>
+    </div>
+
+    <div id="conclusion" class="slide">
+        <h2>8. Conclusion</h2>
+
+        <h3>Summary</h3>
+        <ul>
+            <li>NTRU is a lattice-based public key cryptosystem</li>
+            <li>Offers quantum resistance with good performance</li>
+            <li>Based on the hardness of lattice problems</li>
+            <li>Suitable for various applications from IoT to secure communications</li>
+        </ul>
+
+        <h3>Future Directions</h3>
+        <ul>
+            <li>Ongoing standardization efforts</li>
+            <li>Parameter optimization</li>
+            <li>Hardware acceleration</li>
+            <li>Integration with existing protocols</li>
+        </ul>
+
+        <h3>Resources</h3>
+        <ul>
+            <li>NTRU Open Source Project</li>
+            <li>NIST Post-Quantum Cryptography</li>
+            <li>Research papers by Hoffstein, Pipher, and Silverman</li>
+        </ul>
+
+        <div class="note" style="text-align: center; margin-top: 40px;">
+            <h3>Thank You!</h3>
+            <p>Questions?</p>
+        </div>
+    </div>
+</body>
+</html>

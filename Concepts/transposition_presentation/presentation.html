@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Transposition with Chaotic Tinkerbell Maps</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/night.css">
+  <style>
+    .reveal section img {
+      border: none;
+      box-shadow: none;
+      background: none;
+      max-height: 65vh;
+      margin: 0;
+    }
+    .reveal pre {
+      width: 100%;
+      font-size: 0.6em;
+    }
+    .reveal code {
+      font-family: monospace;
+      background-color: #2a2a2a;
+      padding: 0.2em;
+      border-radius: 0.2em;
+    }
+    .reveal .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 1em;
+    }
+    .reveal .column {
+      text-align: left;
+    }
+    .reveal .small-text {
+      font-size: 0.7em;
+    }
+    .reveal .highlight {
+      color: #42affa;
+    }
+    .reveal .citation {
+      font-size: 0.6em;
+      text-align: right;
+      margin-top: 1em;
+      color: #999;
+    }
+  </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Title Slide -->
+      <section>
+        <h2>Transposition with Chaotic Tinkerbell Maps</h2>
+        <p>A Secure Data Transformation Technique</p>
+        <div class="citation">September 2025</div>
+      </section>
+
+      <!-- Introduction to Transposition -->
+      <section>
+        <h3>What is Transposition?</h3>
+        <div class="grid">
+          <div class="column">
+            <ul>
+              <li>A technique that rearranges data elements</li>
+              <li>Preserves all original data values</li>
+              <li>Changes only the positions of elements</li>
+              <li>Fundamental operation in cryptography</li>
+              <li>Can be applied to any data represented as a grid</li>
+            </ul>
+          </div>
+          <div class="column">
+            <img src="transposition_grid.png" alt="Transposition Grid Example">
+          </div>
+        </div>
+      </section>
+
+      <!-- Introduction to Chaotic Systems -->
+      <section>
+        <h3>Chaos Theory and Cryptography</h3>
+        <div class="grid">
+          <div class="column">
+            <ul>
+              <li>Chaotic systems exhibit:</li>
+              <ul>
+                <li>Sensitivity to initial conditions</li>
+                <li>Topological mixing</li>
+                <li>Dense periodic orbits</li>
+              </ul>
+              <li>Ideal properties for cryptographic applications</li>
+              <li>Unpredictable yet deterministic behavior</li>
+            </ul>
+          </div>
+          <div class="column">
+            <img src="tinkerbell_map.png" alt="Tinkerbell Map Visualization">
+          </div>
+        </div>
+      </section>
+
+      <!-- Tinkerbell Map -->
+      <section>
+        <h3>The Tinkerbell Map</h3>
+        <div class="grid">
+          <div class="column">
+            <p>A discrete-time dynamical system defined by:</p>
+            <p><code>x<sub>n+1</sub> = x<sub>n</sub>² - y<sub>n</sub>² + ax<sub>n</sub> + by<sub>n</sub></code></p>
+            <p><code>y<sub>n+1</sub> = 2x<sub>n</sub>y<sub>n</sub> + cx<sub>n</sub> + dy<sub>n</sub></code></p>
+            <p>Where typical parameter values are:</p>
+            <p><code>a = 0.9, b = -0.6, c = 2.0, d = 0.5</code></p>
+            <p>Different initial values produce different trajectories</p>
+          </div>
+          <div class="column">
+            <img src="tinkerbell_multiple_trajectories.png" alt="Multiple Tinkerbell Trajectories">
+          </div>
+        </div>
+      </section>
+
+      <!-- Chaotic Properties -->
+      <section>
+        <h3>Chaotic Properties of Tinkerbell Map</h3>
+        <div class="grid">
+          <div class="column">
+            <ul>
+              <li><strong>Sensitivity to initial conditions:</strong> Small changes in starting points lead to vastly different trajectories</li>
+              <li><strong>Deterministic:</strong> Same input always produces same output</li>
+              <li><strong>Ergodicity:</strong> Trajectories eventually visit all regions of state space</li>
+              <li><strong>Unpredictability:</strong> Long-term behavior is practically impossible to predict</li>
+            </ul>
+          </div>
+          <div class="column">
+            <img src="tinkerbell_map_zoomed.png" alt="Zoomed Tinkerbell Map">
+          </div>
+        </div>
+      </section>
+
+      <!-- Transposition Algorithm Overview -->
+      <section>
+        <h3>Transposition Algorithm Overview</h3>
+        <ol>
+          <li>Arrange data in a grid structure</li>
+          <li>Divide grid into blocks</li>
+          <li>Generate permutation sequence using chaotic map</li>
+          <li>Shuffle blocks according to permutation</li>
+          <li>Apply additional operations within each block</li>
+        </ol>
+        <img src="transposition_process.png" alt="Transposition Process" style="max-height: 45vh;">
+      </section>
+
+      <!-- Block Operations -->
+      <section>
+        <h3>Block Operations</h3>
+        <p>After block permutation, additional operations are applied within each block:</p>
+        <img src="block_operations.png" alt="Block Operations">
+        <p class="small-text">These operations further increase security and diffusion properties</p>
+      </section>
+
+      <!-- Implementation Details -->
+      <section>
+        <h3>Implementation Details</h3>
+        <pre><code class="cpp">// Key components of the implementation
+void applyTransposition(uint8_t *data, const GridSpec &grid, 
+                       const uint8_t key[8], PermuteMode mode) {
+  // 1. Expand 8-byte key to 16 bytes
+  uint8_t key16[16];
+  // Key expansion logic...
+  
+  // 2. Call enhanced implementation
+  applyTranspositionEnhanced(data, grid, key16, mode);
+}</code></pre>
+        <p>The implementation ensures:</p>
+        <ul>
+          <li>Deterministic behavior (same key → same mapping)</li>
+          <li>Perfect invertibility (Forward → Inverse restores original)</li>
+          <li>Efficient operation on blocks of varying sizes</li>
+        </ul>
+      </section>
+
+      <!-- PRNG Implementation -->
+      <section>
+        <h3>Deterministic PRNG</h3>
+        <pre><code class="cpp">struct DeterministicPRNG {
+  uint64_t state;
+  explicit DeterministicPRNG(const uint8_t key16[16]) {
+    uint64_t s0 = load64be(key16);
+    uint64_t s1 = load64be(key16 + 8);
+    state = s0 ^ (s1 + 0x9E3779B97F4A7C15ull);
+    if (state == 0) state = 0xCAFEBABEDEADBEEFull;
+  }
+  uint64_t next64() {
+    uint64_t z = (state += 0x9E3779B97F4A7C15ull);
+    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ull;
+    z = (z ^ (z >> 27)) * 0x94D049BB133111EBull;
+    return z ^ (z >> 31);
+  }
+  // Additional methods...
+};</code></pre>
+        <p class="small-text">The implementation uses splitmix64-based PRNG for platform stability</p>
+      </section>
+
+      <!-- Chaotic Permutation -->
+      <section>
+        <h3>Chaotic Permutation Generation</h3>
+        <pre><code class="cpp">// Fisher-Yates shuffle using DeterministicPRNG
+static void fy_shuffle_uint16(uint16_t *arr, size_t n, DeterministicPRNG &prng) {
+  if (n <= 1) return;
+  for (size_t i = n - 1; i > 0; --i) {
+    uint32_t rnd32 = prng.next32();
+    size_t j = (size_t)(rnd32 % (uint32_t)(i + 1));
+    uint16_t tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+}</code></pre>
+        <p>The Fisher-Yates shuffle algorithm ensures:</p>
+        <ul>
+          <li>Uniform distribution of permutations</li>
+          <li>Deterministic output based on PRNG seed</li>
+          <li>Efficient O(n) complexity</li>
+        </ul>
+      </section>
+
+      <!-- Applications -->
+      <section>
+        <h3>Applications</h3>
+        <div class="grid">
+          <div class="column">
+            <h4>Cryptography</h4>
+            <ul>
+              <li>Data encryption</li>
+              <li>Secure communication</li>
+              <li>Digital signatures</li>
+              <li>Authentication protocols</li>
+            </ul>
+          </div>
+          <div class="column">
+            <h4>Other Applications</h4>
+            <ul>
+              <li>Image scrambling</li>
+              <li>Secure data storage</li>
+              <li>Multimedia protection</li>
+              <li>Watermarking</li>
+              <li>Steganography</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Security Analysis -->
+      <section>
+        <h3>Security Analysis</h3>
+        <ul>
+          <li><strong>Key Space:</strong> 64-bit key expanded to 128 bits</li>
+          <li><strong>Diffusion:</strong> Changes in one block affect multiple areas</li>
+          <li><strong>Confusion:</strong> Complex relationship between key and output</li>
+          <li><strong>Statistical Properties:</strong> Output appears random</li>
+          <li><strong>Resistance to Attacks:</strong>
+            <ul>
+              <li>Brute force attacks</li>
+              <li>Statistical analysis</li>
+              <li>Known-plaintext attacks</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Performance Considerations -->
+      <section>
+        <h3>Performance Considerations</h3>
+        <div class="grid">
+          <div class="column">
+            <h4>Advantages</h4>
+            <ul>
+              <li>Linear time complexity O(n)</li>
+              <li>Minimal memory overhead</li>
+              <li>Parallelizable operations</li>
+              <li>Platform-independent results</li>
+            </ul>
+          </div>
+          <div class="column">
+            <h4>Optimizations</h4>
+            <ul>
+              <li>Block size adaptation</li>
+              <li>Group-based permutation</li>
+              <li>Memory-efficient operations</li>
+              <li>Deterministic PRNG selection</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Future Directions -->
+      <section>
+        <h3>Future Directions</h3>
+        <ul>
+          <li>Integration with other chaotic maps</li>
+          <li>Hardware acceleration</li>
+          <li>Quantum-resistant variants</li>
+          <li>Application to higher-dimensional data</li>
+          <li>Dynamic key scheduling</li>
+          <li>Adaptive block sizing based on data characteristics</li>
+        </ul>
+      </section>
+
+      <!-- Conclusion -->
+      <section>
+        <h3>Conclusion</h3>
+        <ul>
+          <li>Transposition with chaotic Tinkerbell maps provides:
+            <ul>
+              <li>Strong security properties</li>
+              <li>Efficient implementation</li>
+              <li>Deterministic behavior</li>
+              <li>Perfect invertibility</li>
+            </ul>
+          </li>
+          <li>The combination of block permutation and internal operations creates a robust transformation</li>
+          <li>Chaotic properties ensure high sensitivity to key changes</li>
+          <li>Wide range of applications in security and data protection</li>
+        </ul>
+      </section>
+
+      <!-- Q&A -->
+      <section>
+        <h2>Questions?</h2>
+        <p>Thank you for your attention!</p>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: true,
+      transition: 'slide',
+      plugins: [ RevealHighlight, RevealNotes ]
+    });
+  </script>
+</body>
+</html>

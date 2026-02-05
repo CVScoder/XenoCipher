@@ -1,0 +1,93 @@
+You are an expert UI/UX designer and full-stack developer. Design and generate a seamless, aesthetic, and real-time dashboard website for the XenoCipher Project, a cryptography + cybersecurity research system. This dashboard should feel like the best of its type — clean, professional, modern, and purpose-built for showcasing cryptographic security in healthcare IoT.
+
+Dashboard Requirements
+
+1. Header & Status Bar
+
+Title: “XenoCipher Secure Health Dashboard”.
+
+Current encryption mode indicator: toggle/label showing Normal Mode or ZTM (Zero Trust Mode).
+
+Status indicators: live connection status (online/offline), last sync timestamp.
+
+2. Real-Time Health Data Panel
+
+Display incoming real-time health metrics (Heart Rate, SpO₂, Step Count, Blood Pressure, etc.) in interactive cards.
+
+Each card shows: live value, min/max over time, timestamp, and encryption status badge.
+
+Smooth animated updates to show data streaming in.
+
+3. Health Data Analysis Panel
+
+Interactive line charts, area charts, and trend graphs for each health metric.
+
+Highlight anomalies (e.g., abnormal heart rate) with color-coded alerts.
+
+Provide insights like averages, peaks, and historical comparisons.
+
+4. Encryption & Security Insights
+
+Visualization of the XenoCipher encryption pipeline: LFSR → Chaotic Map → Transposition → HMAC.
+
+Show which layers are active, with animated flow or step indicators.
+
+Real-time alerts for events like: “Fallback to ChaCha20 initiated”, “Decryption failure detected”.
+
+5. Extra Features
+
+Dynamic Key Evolution Timeline → show how keys evolve per session/message.
+
+Encryption Performance Graphs → visualize CPU/memory usage for each cipher stage.
+
+Attack Detection Logs → table showing detected anomalies (DoS, replay attacks, failed decryptions).
+
+Notification System → real-time popups for both health anomalies and security alerts.
+
+6. System Metrics Panel
+
+Show server health (CPU, memory, latency) and ESP32 device stats (battery, uptime, packet loss).
+
+Use simple but aesthetic gauges, progress bars, or small charts.
+
+7. User Controls & Filters
+
+Dropdown to filter devices (ESP32-Node1, ESP32-Node2, etc.).
+
+Date range selector for historical health data.
+
+Toggle to switch between Raw Encrypted Data vs Decrypted Analyzed Data.
+
+Design Guidelines
+
+The theme should fit a cryptographic cybersecurity project — professional, sleek, and modern.
+
+Allow Replit to choose the most aesthetic theme (e.g., futuristic minimalism, professional dark theme, or clean scientific style).
+
+Prioritize seamless UX, intuitive navigation, and smooth animations.
+
+Make the frontend fully responsive (desktop + mobile).
+
+Integration IR (Explain in Output)
+
+Step 1: Connect the dashboard to the existing server API to fetch encrypted health data.
+
+Step 2: Handle data decryption (backend or frontend, depending on architecture) and stream into charts.
+
+Step 3: Implement WebSockets or server-sent events for real-time updates.
+
+Step 4: Integrate encryption mode (Normal/ZTM) toggle with backend flag.
+
+Step 5: Add notification system for anomalies/security alerts.
+
+Step 6: Show encryption logic visualization using real-time data from the XenoCipher pipeline.
+
+Step 7: Extend system for multiple devices/users in future.
+
+Deliver:
+
+A production-ready frontend (React, Tailwind, or any modern stack).
+
+Mockup + live code snippets for charts, alerts, and encryption visualization components.
+
+Detailed integration guidelines so we can plug this into our current ESP32 + server system.

@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(222, 15%, 7%);
+  --foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 20%, 11%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --popover: hsl(222, 15%, 7%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --primary: hsl(191, 100%, 50%);
+  --primary-foreground: hsl(222, 15%, 7%);
+  --secondary: hsl(222, 20%, 16%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --muted: hsl(222, 20%, 16%);
+  --muted-foreground: hsl(215, 20%, 65%);
+  --accent: hsl(145, 63%, 49%);
+  --accent-foreground: hsl(222, 15%, 7%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(222, 20%, 20%);
+  --input: hsl(222, 20%, 16%);
+  --ring: hsl(191, 100%, 50%);
+  --chart-1: hsl(191, 100%, 50%);
+  --chart-2: hsl(145, 63%, 49%);
+  --chart-3: hsl(42, 92%, 56%);
+  --chart-4: hsl(147, 78%, 42%);
+  --chart-5: hsl(341, 75%, 51%);
+  --sidebar: hsl(222, 20%, 11%);
+  --sidebar-foreground: hsl(210, 40%, 98%);
+  --sidebar-primary: hsl(191, 100%, 50%);
+  --sidebar-primary-foreground: hsl(222, 15%, 7%);
+  --sidebar-accent: hsl(145, 63%, 49%);
+  --sidebar-accent-foreground: hsl(222, 15%, 7%);
+  --sidebar-border: hsl(222, 20%, 20%);
+  --sidebar-ring: hsl(191, 100%, 50%);
+  --font-sans: Inter;
+  --font-serif: Architects Daughter;
+  --font-mono: Architects Daughter;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: hsl(222, 15%, 7%);
+  --foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 20%, 11%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --popover: hsl(222, 15%, 7%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --primary: hsl(191, 100%, 50%);
+  --primary-foreground: hsl(222, 15%, 7%);
+  --secondary: hsl(222, 20%, 16%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --muted: hsl(222, 20%, 16%);
+  --muted-foreground: hsl(215, 20%, 65%);
+  --accent: hsl(145, 63%, 49%);
+  --accent-foreground: hsl(222, 15%, 7%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(222, 20%, 20%);
+  --input: hsl(222, 20%, 16%);
+  --ring: hsl(191, 100%, 50%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: hsl(222, 20%, 11%, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(222, 20%, 20%);
+  }
+
+  .cyber-glow {
+    box-shadow: 0 0 20px hsl(191, 100%, 50%, 0.3);
+  }
+
+  .encryption-flow {
+    background: linear-gradient(90deg, transparent, hsl(191, 100%, 50%, 0.2), transparent);
+    background-size: 200% 100%;
+    animation: flowAnimation 3s linear infinite;
+  }
+}
+
+@layer utilities {
+  .pulse-dot {
+    animation: pulse 2s infinite;
+  }
+
+  .chart-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 2s ease-in-out forwards;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1; 
+  }
+  50% { 
+    opacity: 0.5; 
+  }
+}
+
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flowAnimation {
+  0% { 
+    background-position: -200% 0; 
+  }
+  100% { 
+    background-position: 200% 0; 
+  }
+}

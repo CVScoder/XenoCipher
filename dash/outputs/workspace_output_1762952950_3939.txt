@@ -1,0 +1,7 @@
+total 12
+drwxr-xr-x  5 root root  108 Nov 12 13:09 .
+drwxr-xr-x  4 root root  169 Nov 12 13:09 ..
+drwxr-xr-x  8 root root 4096 Nov 12 13:09 .git
+-rw-r--r--  1 root root   66 Nov 12 13:09 .gitattributes
+drwxr-xr-x  2 root root   91 Nov 12 13:09 .vscode
+drwxr-xr-x 10 root root 4096 Nov 12 13:09 XenoCipher_Healthcare_IoT

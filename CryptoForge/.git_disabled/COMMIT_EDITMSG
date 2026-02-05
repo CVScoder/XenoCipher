@@ -1,0 +1,8 @@
+Update default device selection to display all devices
+
+Modify the HealthChartsPanel component to default to displaying all devices. Update the TanStack Query key and enabled state to correctly handle the "all" device selection, ensuring that data fetching works as expected when no specific device is chosen.
+
+Replit-Commit-Author: Agent
+Replit-Commit-Session-Id: 868361ce-9f15-4199-8b2b-0a1db8ae3052
+Replit-Commit-Checkpoint-Type: full_checkpoint
+Replit-Commit-Screenshot-Url: https://storage.googleapis.com/screenshot-production-us-central1/712c6fc5-a702-454b-92a5-84ac1168ef4f/868361ce-9f15-4199-8b2b-0a1db8ae3052/b06RHdA
